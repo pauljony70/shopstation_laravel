@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\Admin\Basic\BrandController as AdminBrandController;
+use App\Http\Controllers\Admin\Basic\CategoryController as AdminCategoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -42,4 +43,8 @@ Route::group(['prefix' => 'admin', 'middleware' => ['admin.check']], function ()
     Route::put('brands/update/{id}', [AdminBrandController::class, 'update'])->name('admin.brands.update');
     Route::delete('brands/delete/{id}', [AdminBrandController::class, 'destroy'])->name('admin.brands.destroy');
     Route::post('unique-brand-name', [AdminBrandController::class, 'uniqueBrandNmae'])->name('admin.brands.unique-name');
+
+    Route::get('categories', [AdminCategoryController::class, 'index'])->name('admin.category.index');
+    Route::get('category/store', [AdminCategoryController::class, 'store'])->name('admin.category.store');
+    Route::post('unique-category-name', [AdminCategoryController::class, 'uniqueCategoryNmae'])->name('admin.categories.unique-name');
 });

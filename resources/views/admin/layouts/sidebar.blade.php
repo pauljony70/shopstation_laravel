@@ -66,6 +66,9 @@
                             <li>
                                 <a href="{{ route('admin.brands.index') }}">Brand</a>
                             </li>
+                            <li>
+                                <a href="{{ route('admin.category.index') }}">Category</a>
+                            </li>
                         </ul>
                     </div>
                 </li>

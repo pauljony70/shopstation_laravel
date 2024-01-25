@@ -41,7 +41,7 @@ class BrandController extends Controller
         ]);
 
         // Upload image(s) and get the image path(s)
-        $imagePaths = ImageHelper::uploadImage($request->file('image'));
+        $imagePaths = ImageHelper::uploadImage($request->file('image'), 'brand');
 
         // Create a new Brand instance with the image path(s)
         $brand = Brand::create([
@@ -100,7 +100,7 @@ class BrandController extends Controller
             ImageHelper::deleteImage($brand->brand_img);
 
             // Upload the new image and get the image path
-            $imagePath = ImageHelper::uploadImage($request->file('image'));
+            $imagePath = ImageHelper::uploadImage($request->file('image'), 'brand');
 
             // Update the brand's image path
             $brand->brand_img = $imagePath;
