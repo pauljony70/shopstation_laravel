@@ -5,9 +5,10 @@
             <li class="dropdown notification-list topbar-dropdown">
                 <a class="nav-link dropdown-toggle nav-user mr-0 waves-effect waves-light" data-toggle="dropdown"
                     href="#" role="button" aria-haspopup="false" aria-expanded="false">
-                    <!--<img src="{{ asset('assets/images/dummy.jpg') }}" height="88" alt="user-image" class="rounded-circle shadow">-->
+                    <img src="{{ asset('assets/images/dummy.jpg') }}" height="88" alt="user-image"
+                        class="rounded-circle shadow">
                     <span class="pro-user-name ml-1">
-                        Jony <i class="mdi mdi-chevron-down"></i>
+                        {{ auth('admin')->user()->fullname }} <i class="mdi mdi-chevron-down"></i>
                     </span>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right profile-dropdown ">

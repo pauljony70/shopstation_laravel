@@ -50,8 +50,24 @@
                 <li>
                     <a href="{{ route('admin.dashboard') }}">
                         <i class="fas fa-tachometer-alt"></i>
-                        <span> Dashboards </span>
+                        <span> Dashboard </span>
                     </a>
+                </li>
+
+                <!-- basic -->
+                <li>
+                    <a href="#basic" data-toggle="collapse">
+                        <i class="fas fa-cog"></i>
+                        <span> Basic </span>
+                        <span class="menu-arrow"></span>
+                    </a>
+                    <div class="collapse" id="basic">
+                        <ul class="nav-second-level">
+                            <li>
+                                <a href="{{ route('admin.brands.index') }}">Brand</a>
+                            </li>
+                        </ul>
+                    </div>
                 </li>
 
                 <!-- portals -->

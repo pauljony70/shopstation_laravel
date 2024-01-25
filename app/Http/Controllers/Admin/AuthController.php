@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 
 use Illuminate\Support\Facades\Hash;
@@ -32,7 +33,7 @@ class AuthController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function login(Request $request)
+    public function login(Request $request): RedirectResponse
     {
         // Validate the request data
         $request->validate([
@@ -47,10 +48,10 @@ class AuthController extends Controller
             // Authentication passed
 
             // Check if there is a previous intended URL
-            $intendedUrl = redirect()->intended(route('admin.dashboard'))->getTargetUrl();
+            $intendedUrl = session()->get('url.intended', route('admin.dashboard'));
 
             // Redirect to the intended URL or to admin
-            return redirect()->to($intendedUrl ?: 'admin'); // Adjust the route name accordingly
+            return redirect()->to($intendedUrl);
         }
 
         // Authentication failed
@@ -77,12 +78,6 @@ class AuthController extends Controller
      */
     public function showDashboard()
     {
-        // If user is not authenticated, dump session data and redirect to the login page
-        if (!Auth::guard('admin')->check()) {
-            return redirect()->route('admin.login.form');
-        }
-
-        // If authenticated, show the admin dashboard or the main admin page
         return view('admin.dashboard'); // Adjust the view name accordingly
     }
 }
