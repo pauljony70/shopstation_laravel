@@ -44,7 +44,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['admin.check']], function ()
     Route::delete('brands/delete/{id}', [AdminBrandController::class, 'destroy'])->name('admin.brands.destroy');
     Route::post('unique-brand-name', [AdminBrandController::class, 'uniqueBrandNmae'])->name('admin.brands.unique-name');
 
-    Route::get('categories', [AdminCategoryController::class, 'index'])->name('admin.category.index');
+    Route::get('categories/{catSlug?}', [AdminCategoryController::class, 'index'])->name('admin.category.index');
     Route::post('category/store', [AdminCategoryController::class, 'store'])->name('admin.category.store');
     Route::post('unique-category-name', [AdminCategoryController::class, 'uniqueCategoryNmae'])->name('admin.categories.unique-name');
 });

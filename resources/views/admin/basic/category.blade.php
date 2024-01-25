@@ -34,7 +34,8 @@
                         enctype="multipart/form-data">
                         @csrf
                         <div class="form-check mb-2">
-                            <input class="form-check-input" type="checkbox" value="" id="make_parent_cat">
+                            <input class="form-check-input" type="checkbox" value="1" id="make_parent_cat"
+                                name="make_parent_cat">
                             <label class="form-check-label" for="make_parent_cat">
                                 Make Parent Category
                             </label>
@@ -47,8 +48,12 @@
                             <ul class="category-list py-2 mb-1 border rounded">
                                 @foreach ($hierarchicalCategories as $category)
                                     <li>
-                                        <input type="radio" name="selected_category" value="{{ $category->id }}">
-                                        {{ $category->cat_name }}
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="selected_category"
+                                                id="selected_category{{ $category->id }}" value="{{ $category->id }}">
+                                            <label class="form-check-label"
+                                                for="selected_category{{ $category->id }}">{{ $category->cat_name }}</label>
+                                        </div>
                                         @if ($category->children && count($category->children) > 0)
                                             @include('admin.partials.subcategoriesoption', [
                                                 'subcategories' => $category->children,
@@ -160,7 +165,7 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-body">
-                                <button type="button" class="btn btn-info waves-effect waves-light mb-lg-3"
+                                <button type="button" class="btn btn-info waves-effect waves-light mb-3"
                                     data-toggle="modal" data-target=".add-btn">Add New Category</button>
                                 <table id="ddDataTable" class="table table-centered dt-responsive nowrap w-100">
                                     <thead class="thead-light">
@@ -172,9 +177,44 @@
                                     </thead>
 
                                     <tbody>
-                                        {{-- @foreach ($categories as $category)
-
-                                        @endforeach --}}
+                                        @foreach ($categories as $category)
+                                            <tr>
+                                                <td>
+                                                    <div class="dropdown">
+                                                        <div class="btn btn btn-primary btn-xs dropdown-toggle"
+                                                            data-toggle="dropdown">
+                                                            <i class="fas fa-ellipsis-h"></i>
+                                                        </div>
+                                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton"
+                                                            style="">
+                                                            <a href="{{ route('admin.category.index', ['catSlug' => $category->cat_slug]) }}" class="dropdown-item edit-btn"><i class="far fa-eye mr-3"></i>View Sub Category</a>
+                                                            <a href="#" class="dropdown-item edit-btn"
+                                                                data-toggle="modal" data-id="{{ $category->id }}"><i
+                                                                    class="far fa-edit mr-3"></i>Edit</a>
+                                                            <a href="#" class="dropdown-item delete-btn"
+                                                                data-toggle="modal" data-id="{{ $category->id }}"><i
+                                                                    class="far fa-trash-alt mr-3"></i>Delete</a>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="">
+                                                        <img src="{{ asset('storage/' . $category->cat_img) }}"
+                                                            alt="{{ $category->cat_name }}" class="mr-2 align-middle"
+                                                            height="75">
+                                                        <span class="align-middle"
+                                                            style="display: inline-block; white-space: break-spaces; break-spaces; max-width:150px;">{{ $category->cat_name }}</span>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    @if ($category->status == 1)
+                                                        <span class="badge badge-success text-uppercase">Active</span>
+                                                    @else
+                                                        <span class="badge badge-danger text-uppercase">Inactive</span>
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                        @endforeach
                                     </tbody>
 
                                 </table>
@@ -212,16 +252,6 @@
 
             var table = $('#ddDataTable').DataTable(datatableOptions);
 
-            $('#make_parent_cat').change(function() {
-                // Check if the checkbox is not checked
-                if (!$(this).is(':checked')) {
-                    // If not checked, add the data-parsley-required-if attribute to the radio input
-                    $('#category_radio').attr('data-parsley-required-if', 'make_parent_cat:not(:checked)');
-                } else {
-                    // If checked, remove the data-parsley-required-if attribute from the radio input
-                    $('#category_radio').removeAttr('data-parsley-required-if');
-                }
-            });
 
             $('#searchCategory').on('input', function() {
                 var searchText = $(this).val().toLowerCase();
@@ -231,7 +261,7 @@
                 $('.category-list li:contains("' + searchText + '")').show();
             });
 
-            /* $('#make_parent_cat').on('change', function() {
+            $('#make_parent_cat').on('change', function() {
                 // Check if the checkbox is checked
                 if ($(this).is(':checked')) {
                     // If checked, hide the parent_cat_div
@@ -240,7 +270,7 @@
                     // If unchecked, show the parent_cat_div
                     $('#parent_cat_div').show();
                 }
-            }); */
+            });
 
             /************* inserdata addclass *****************/
             $('#addForm').parsley();
@@ -281,6 +311,15 @@
                             text: error.responseJSON.message,
                             type: "warning",
                             dangerMode: true,
+                        }).then(function(res) {
+                            location.reload();
+                        });
+                    },
+                    422: function(error) {
+                        $.busyLoadFull("hide");
+                        Swal.fire({
+                            text: error.responseJSON.text,
+                            type: "warning",
                         }).then(function(res) {
                             location.reload();
                         });
@@ -331,6 +370,8 @@
             // after add-modal close reset add-forms
             $("#add-modal").on("hidden.bs.modal", function() {
                 $('#addForm').parsley().reset();
+                $("#addForm")[0].reset();
+                $("#parent_cat_div").show();
             });
 
         });
