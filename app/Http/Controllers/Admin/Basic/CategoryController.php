@@ -22,10 +22,15 @@ class CategoryController extends Controller
         // Organize all categories in a hierarchical structure
         $hierarchicalCategories = $this->buildCategoryTree($categories);
 
+        // Initialize breadcrumbs array
+        $breadcrumbs = [];
+
         // If a category slug is provided, filter the categories to show only the relevant subtree
         if ($cat_slug) {
             $selectedCategory = $this->findCategoryBySlug($categories, $cat_slug);
             if ($selectedCategory) {
+                // Build breadcrumbs for the selected category
+                $breadcrumbs = $this->buildBreadcrumbs($categories, $selectedCategory->id);
                 // Build a tree only for the selected category's subtree
                 $categories = $this->buildCategoryTree($categories, $selectedCategory->id);
             } else {
@@ -37,14 +42,25 @@ class CategoryController extends Controller
             $categories = $this->buildCategoryTree($categories, 0);
         }
 
-        // Pass the organized categories data to the view for display
-        return view('admin.basic.category', compact('hierarchicalCategories', 'categories'));
+        // Pass the organized categories data and breadcrumbs to the view for display
+        return view('admin.basic.category', compact('hierarchicalCategories', 'categories', 'breadcrumbs'));
     }
 
     protected function findCategoryBySlug($categories, $slug)
     {
         foreach ($categories as $category) {
             if ($category->cat_slug == $slug) {
+                return $category;
+            }
+        }
+
+        return null;
+    }
+
+    protected function findCategoryById($categories, $categoryId)
+    {
+        foreach ($categories as $category) {
+            if ($category->id == $categoryId) {
                 return $category;
             }
         }
@@ -69,6 +85,22 @@ class CategoryController extends Controller
         }
 
         return collect($categoryTree);
+    }
+
+    protected function buildBreadcrumbs($categories, $categoryId)
+    {
+        $breadcrumbs = [];
+
+        $category = $this->findCategoryById($categories, $categoryId);
+
+        while ($category) {
+            // Add the category to the beginning of the breadcrumbs array
+            array_unshift($breadcrumbs, $category);
+            // Move to the parent category
+            $category = $this->findCategoryById($categories, $category->parent_id);
+        }
+
+        return $breadcrumbs;
     }
 
     /**
@@ -165,7 +197,9 @@ class CategoryController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $category = Category::findOrFail($id);
+
+        return response()->json($category, 200);
     }
 
     /**
@@ -173,7 +207,51 @@ class CategoryController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $request->validate([
+            'name' => 'required|string',
+            'status' => 'required|in:1,0',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        // Find the Category by ID
+        $category = Category::findOrFail($id);
+
+        // Generate a unique slug for the category based on the name
+        $originalSlug = Str::slug($request->name);
+        $catSlug = $originalSlug;
+        $counter = 1;
+
+        // Check for slug uniqueness
+        while (Category::where('cat_slug', $catSlug)->exists()) {
+            $catSlug = $originalSlug . '-' . $counter;
+            $counter++;
+        }
+
+        // Update the category details
+        $category->cat_name = $request->name;
+        $category->cat_slug = $catSlug;
+        $category->status = $request->status;
+
+        // Update the image if a new one is provided
+        if ($request->hasFile('image')) {
+            // Delete old image(s) if any
+            ImageHelper::deleteImage($category->cat_img);
+
+            // Upload the new image and get the image path
+            $imagePath = ImageHelper::uploadImage($request->file('image'), 'category');
+
+            // Update the category's image path
+            $category->cat_img = $imagePath;
+        }
+
+        // Save the updated category
+        $category->save();
+
+        return response()->json([
+            'option' => $category,
+            'type' => 'success',
+            'text' => 'Category has been updated successfully',
+        ], 200);
     }
 
     /**
@@ -181,7 +259,33 @@ class CategoryController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        // Find the category by ID
+        $category = Category::findOrFail($id);
+
+        // Delete the category and its children
+        $this->deleteCategoryAndChildren($category);
+
+        // Redirect or return a response as needed
+        return response()->json([
+            'type' => 'success',
+            'text' => 'Category has been deleted successfully',
+        ], 200);
+    }
+
+    protected function deleteCategoryAndChildren($category)
+    {
+        // Delete children categories recursively
+        if ($category->children) {
+            foreach ($category->children as $child) {
+                $this->deleteCategoryAndChildren($child);
+            }
+        }
+
+        // Delete associated images
+        ImageHelper::deleteImage($category->cat_img);
+
+        // Delete the current category
+        $category->delete();
     }
 
     public function uniqueCategoryNmae(Request $request)

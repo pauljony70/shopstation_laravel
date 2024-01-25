@@ -148,13 +148,26 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="page-title-box">
-                            {{-- <div class="page-title-right">
+                            <div class="page-title-right">
                                 <ol class="breadcrumb m-0">
-                                    <li class="breadcrumb-item"><a href="javascript: void(0);">UBold</a></li>
-                                    <li class="breadcrumb-item"><a href="javascript: void(0);">Tables</a></li>
-                                    <li class="breadcrumb-item active">Datatables</li>
+                                    <li class="breadcrumb-item">
+                                        <a href="{{ route('admin.category.index') }}">Home</a>
+                                    </li>
+                                    @if (count($breadcrumbs) > 0)
+                                        @foreach ($breadcrumbs as $key => $breadcrumb)
+                                            <li
+                                                class="breadcrumb-item{{ $key === count($breadcrumbs) - 1 ? ' active' : '' }}">
+                                                @if ($key === count($breadcrumbs) - 1)
+                                                    {{ $breadcrumb->cat_name }}
+                                                @else
+                                                    <a
+                                                        href="{{ route('admin.category.index', $breadcrumb->cat_slug) }}">{{ $breadcrumb->cat_name }}</a>
+                                                @endif
+                                            </li>
+                                        @endforeach
+                                    @endif
                                 </ol>
-                            </div> --}}
+                            </div>
                             <h4 class="page-title">@yield('title')</h4>
                         </div>
                     </div>
@@ -187,7 +200,9 @@
                                                         </div>
                                                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton"
                                                             style="">
-                                                            <a href="{{ route('admin.category.index', ['catSlug' => $category->cat_slug]) }}" class="dropdown-item edit-btn"><i class="far fa-eye mr-3"></i>View Sub Category</a>
+                                                            <a href="{{ route('admin.category.index', ['catSlug' => $category->cat_slug]) }}"
+                                                                class="dropdown-item edit-btn"><i
+                                                                    class="far fa-eye mr-3"></i>View Sub Category</a>
                                                             <a href="#" class="dropdown-item edit-btn"
                                                                 data-toggle="modal" data-id="{{ $category->id }}"><i
                                                                     class="far fa-edit mr-3"></i>Edit</a>
@@ -372,6 +387,125 @@
                 $('#addForm').parsley().reset();
                 $("#addForm")[0].reset();
                 $("#parent_cat_div").show();
+            });
+
+            /*************** edit editForm *****************/
+            $('#editForm').parsley();
+
+            var id = '';
+            $('body').on('click', '.edit-btn', function() {
+                $.busyLoadFull("show");
+                id = $(this).data('id');
+                // Make an AJAX request to fetch data
+                $.get("{{ route('admin.category.edit', '') }}/" + id, function(data) {
+                    $.busyLoadFull("hide");
+                    $('#edit-modal').modal('show');
+                    $("#editForm").attr("action", "{{ route('admin.category.update', '') }}/" +
+                        data
+                        .id);
+                    $('#editForm #name').val(data.cat_name);
+                    var imagenUrl = "{{ asset('storage') }}/" + data.cat_img;
+                    var drEvent = $('#editForm #image').dropify();
+                    drEvent = drEvent.data('dropify');
+                    drEvent.settings.defaultFile = imagenUrl;
+                    drEvent.destroy();
+                    drEvent.init();
+                    $('#editForm #category_status option[value="' + data.status + '"]').prop(
+                        'selected', true);
+                });
+            });
+
+            $('#editForm').ajaxForm({
+                beforeSubmit: function(arr, form, options) {
+                    $.busyLoadFull("show");
+                },
+                type: 'POST',
+                statusCode: {
+                    500: function(error) {
+                        $.busyLoadFull("hide");
+                        Swal.fire({
+                            text: error.responseJSON.message,
+                            type: "warning",
+                            dangerMode: true,
+                        });
+                    },
+                    200: function(res) {
+                        // console.log(res);
+                        $.busyLoadFull("hide");
+                        $('#editForm').parsley().reset();
+                        if (res.type == 'success') {
+                            Swal.fire({
+                                text: res.text,
+                                type: "success",
+                            }).then(function(res) {
+                                location.reload();
+                            });
+                            // console.log(res);
+                            $('#edit-modal').modal('hide');
+                            $('#editForm').clearForm();
+
+                            // After add new show table and hide no data alert
+                            // $('#tableCard').removeClass('hide');
+                            // $('#noDataAlert').addClass('hide');
+
+                            // table.destroy();
+                            // table = $('#ddDataTable').DataTable(datatableOptions);
+                        }
+                    }
+                }
+            });
+
+            // Unique check name Edit form
+            window.Parsley.addValidator('editformname', {
+                validateString: function(value) {
+                    return $.ajax({
+                        url: "{{ route('admin.categories.unique-name') }}",
+                        method: "POST",
+                        data: {
+                            name: value,
+                            exception_data: id,
+                        },
+                        dataType: "json",
+                        success: function(data) {
+                            return true;
+                        }
+                    });
+                }
+            });
+
+            // after edit-class-modal close rest all forms
+            $("#edit-modal").on("hidden.bs.modal", function() {
+                $('#editForm').parsley().reset();
+            });
+
+            /*************** Delete *****************/
+            $('body').on('click', ".delete-btn", function(e) {
+                var id = $(this).data('id');
+                e.preventDefault();
+                Swal.fire({
+                        title: "ATTENTION !!!",
+                        text: "If you delete this category it can't be restored.",
+                        type: "warning",
+                        showCancelButton: true,
+                    })
+                    .then((res) => {
+                        if (res.value) {
+                            $.ajax({
+                                type: 'DELETE',
+                                url: "{{ route('admin.category.destroy', ['id' => '__id__']) }}"
+                                    .replace('__id__', id),
+
+                                success: function(res) {
+                                    Swal.fire({
+                                        text: res.text,
+                                        type: "success",
+                                    }).then((res) => {
+                                        location.reload();
+                                    });
+                                }
+                            });
+                        }
+                    });
             });
 
         });

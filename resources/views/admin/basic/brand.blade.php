@@ -381,7 +381,7 @@
                 e.preventDefault();
                 Swal.fire({
                         title: "ATTENTION !!!",
-                        text: "If You delete this brand it can't be restored.",
+                        text: "If you delete this brand it can't be restored.",
                         type: "warning",
                         showCancelButton: true,
                     })

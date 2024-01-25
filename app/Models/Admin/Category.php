@@ -19,4 +19,9 @@ class Category extends Model
         'status',
         'created_by'
     ];
+
+    public function children()
+    {
+        return $this->hasMany(Category::class, 'parent_id', 'id');
+    }
 }
