@@ -14,11 +14,33 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        // Retrieve brands from the database
-        // $categories = Category::all();
+        // Retrieve all categories from the database
+        $categories = Category::all();
 
-        // Pass the brands data to the view for display
-        return view('admin.basic.category', compact('categories'));
+        // Organize categories in a hierarchical structure
+        $hierarchicalCategories = $this->buildCategoryTree($categories);
+
+        // Pass the organized categories data to the view for display
+        return view('admin.basic.category', compact('hierarchicalCategories'));
+    }
+
+    protected function buildCategoryTree($categories, $parentId = 0)
+    {
+        $categoryTree = [];
+
+        foreach ($categories as $category) {
+            if ($category->parent_id == $parentId) {
+                $children = $this->buildCategoryTree($categories, $category->id);
+
+                if ($children->isNotEmpty()) {
+                    $category->children = $children;
+                }
+
+                $categoryTree[] = $category;
+            }
+        }
+
+        return collect($categoryTree);
     }
 
     /**
@@ -34,29 +56,41 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string',
-            'status' => 'required|in:1,0',
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
+        try {
+            $request->validate([
+                'name' => 'required|string',
+                'status' => 'required|in:1,0',
+                'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            ]);
 
-        // Upload image(s) and get the image path(s)
-        $imagePaths = ImageHelper::uploadImage($request->file('image'), 'category');
+            // Upload image(s) and get the image path(s)
+            $imagePaths = ImageHelper::uploadImage($request->file('image'), 'category');
 
-        // Create a new Category instance with the image path(s)
-        $category = Category::create([
-            'cat_name' => $request->name,
-            'cat_slug' => $request->name,
-            'status' => $request->status,
-            'brand_img' => $imagePaths,
-            'created_by' => auth('admin')->user()->id,
-        ]);
+            // Create a new Category instance with the image path(s)
+            $category = Category::create([
+                'cat_name' => $request->name,
+                'cat_slug' => $request->name,
+                'cat_img' => $imagePaths,
+                'status' => $request->status,
+                'created_by' => auth('admin')->user()->id,
+            ]);
 
-        return response()->json([
-            'option' => $category,
-            'type' => 'success',
-            'text' => 'Category has been added Successfully',
-        ], 200);
+            return response()->json([
+                'option' => $category,
+                'type' => 'success',
+                'text' => 'Category has been added Successfully',
+            ], 200);
+        } catch (\Exception $e) {
+            // Delete the uploaded image if an error occurs
+            if ($imagePaths) {
+                ImageHelper::deleteImage($imagePaths);
+            }
+
+            return response()->json([
+                'type' => 'error',
+                'message' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     /**

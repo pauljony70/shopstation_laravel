@@ -313,7 +313,7 @@
 
             $('#editForm').ajaxForm({
                 beforeSubmit: function(arr, form, options) {
-                    // $.busyLoadFull("show");
+                    $.busyLoadFull("show");
                 },
                 type: 'POST',
                 statusCode: {
