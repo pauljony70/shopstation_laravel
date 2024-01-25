@@ -15,7 +15,7 @@ class CategoryController extends Controller
     public function index()
     {
         // Retrieve brands from the database
-        $categories = Category::all();
+        // $categories = Category::all();
 
         // Pass the brands data to the view for display
         return view('admin.basic.category', compact('categories'));
