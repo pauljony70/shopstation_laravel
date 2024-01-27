@@ -12,7 +12,6 @@ class AttributeValue extends Model
     protected $table = 'product_attributes_conf';
 
     protected $fillable = [
-        'attribute',
         'attribute_id',
         'attribute_value',
     ];

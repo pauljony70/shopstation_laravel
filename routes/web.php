@@ -63,7 +63,12 @@ Route::group(['prefix' => 'admin', 'middleware' => ['admin.check']], function ()
         Route::delete('attribute/delete/{id}', [AdminAttributeController::class, 'destroy'])->name('admin.attribute.destroy');
 
         Route::get('attribute-values', [AdminAttributeValueController::class, 'index'])->name('admin.attribute_values.index');
+        Route::post('attribute-value/store', [AdminAttributeValueController::class, 'store'])->name('admin.attribute_value.store');
+        Route::get('attribute-value/edit/{id}', [AdminAttributeValueController::class, 'edit'])->name('admin.attribute_value.edit');
+        Route::put('attribute-value/update/{id}', [AdminAttributeValueController::class, 'update'])->name('admin.attribute_value.update');
+        Route::delete('attribute-value/delete/{id}', [AdminAttributeValueController::class, 'destroy'])->name('admin.attribute_value.destroy');
     });
 
     Route::post('unique-attribute-name', [AjaxUniqueController::class, 'uniqueAttributeName'])->name('admin.attribute.unique-name');
+    Route::post('unique-attribute-value-name', [AjaxUniqueController::class, 'uniqueAttributeValueName'])->name('admin.attribute_value.unique-name');
 });

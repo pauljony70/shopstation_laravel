@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Admin\Attribute;
+use App\Models\Admin\AttributeValue;
 
 class AjaxUniqueController extends Controller
 {
@@ -17,6 +18,21 @@ class AjaxUniqueController extends Controller
             $output = array('success' => true);
             return response()->json($output, 200);
         } elseif ($attribute->id == $request->exception_data) { //in case of edit form
+            $output = array('success' => true);
+            return response()->json($output, 200);
+        }
+    }
+
+    public function uniqueAttributeValueName(Request $request)
+    {
+        $attribute_value = AttributeValue::where([
+            'attribute_value' => $request->name,
+        ])->first();
+
+        if (empty($attribute_value)) {
+            $output = array('success' => true);
+            return response()->json($output, 200);
+        } elseif ($attribute_value->id == $request->exception_data) { //in case of edit form
             $output = array('success' => true);
             return response()->json($output, 200);
         }

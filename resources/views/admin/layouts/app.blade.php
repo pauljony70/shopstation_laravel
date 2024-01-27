@@ -83,6 +83,13 @@
         .table {
             color: #000 !important;
         }
+
+        label.colour{
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            margin-bottom: -4px; 
+        }
     </style>
 
     @stack('styles')

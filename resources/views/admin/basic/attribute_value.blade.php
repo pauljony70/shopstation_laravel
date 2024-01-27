@@ -5,6 +5,10 @@
 @push('styles')
 @endpush
 
+@php
+    use App\Helpers\ColorHelper;
+@endphp
+
 @section('content')
     <!-- ============================================================== -->
     <!-- Start right Content here -->
@@ -16,24 +20,15 @@
         <div class="modal-dialog  modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-body p-4">
-                    <form id="addForm" class="" action="{{ route('admin.attribute.store') }}" method="post"
+                    <form id="addForm" class="" action="{{ route('admin.attribute_value.store') }}" method="post"
                         enctype="multipart/form-data">
                         @csrf
                         <div class="form-group">
-                            <label for="name">Name (Create new product attributes like - Size, Color, Dimension etc.
-                                Note -To add values in attribute click on view button (for example -> Size - S / M/ L/
-                                XL))<span class="text-danger">&#42;</span></label>
+                            <input type="hidden" name="id" value="{{ $attribute->id }}">
+                            <label for="name">Name<span class="text-danger">&#42;</span></label>
                             <input id="name" class="form-control" name="name" type="text" placeholder="Name"
                                 data-parsley-addformname data-parsley-addformname-message="Name is already exist"
                                 data-parsley-required-message="Name is required." required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="attribute_status">Status</label>
-                            <select id="attribute_status" class="form-control" name="status">
-                                <option value="1">Active</option>
-                                <option value="0">Inactive</option>
-                            </select>
                         </div>
 
                         <button id="btnSubmit" type="submit" class="btn btn-info">Save</button>
@@ -53,21 +48,12 @@
                     <form id="editForm" class="" action="" method="put">
                         @csrf
                         <div class="form-group">
-                            <label for="name">Name (Create new product attributes like - Size, Color, Dimension etc.
-                                Note -To add values in attribute click on view button (for example -> Size - S / M/ L/
-                                XL))<span class="text-danger">&#42;</span></label>
+                            <label for="name">Name<span class="text-danger">&#42;</span></label>
                             <input id="name" class="form-control" name="name" type="text" placeholder="Name"
                                 data-parsley-editformname data-parsley-editformname-message="Name is already exist"
                                 data-parsley-required-message="Name is required." required>
                         </div>
 
-                        <div class="form-group">
-                            <label for="attribute_status">Status</label>
-                            <select id="attribute_status" class="form-control" name="status">
-                                <option value="1">Active</option>
-                                <option value="0">Inactive</option>
-                            </select>
-                        </div>
                         <button type="submit" class="btn btn-info">Update</button>
                     </form>
                 </div>
@@ -102,19 +88,22 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-body">
-                                <button type="button" class="btn btn-info waves-effect waves-light mb-lg-3"
-                                    data-toggle="modal" data-target=".add-btn">Add New Attribute</button>
+                                <a href="{{ route('admin.attributes.index') }}"
+                                    class="btn btn-dark waves-effect waves-light mb-3">
+                                    <i class="fas fa-arrow-left"></i> Back</a>
+                                <button type="button" class="btn btn-info waves-effect waves-light mb-3"
+                                    data-toggle="modal" data-target=".add-btn">Add New Attribute Value</button>
                                 <table id="ddDataTable" class="table table-centered dt-responsive nowrap w-100">
                                     <thead class="thead-light">
                                         <tr>
                                             <th>Actions</th>
+                                            <th>Main Attribute</th>
                                             <th>Name</th>
-                                            <th>Status</th>
                                         </tr>
                                     </thead>
 
                                     <tbody>
-                                        @foreach ($attributes as $attribute)
+                                        @foreach ($attribute_values as $attribute_value)
                                             <tr>
                                                 <td>
                                                     <div class="dropdown">
@@ -124,24 +113,21 @@
                                                         </div>
                                                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton"
                                                             style="">
-                                                            <a href="#" class="dropdown-item">
-                                                                <i class="far fa-eye mr-3"></i>View
-                                                            </a>
                                                             <a href="#" class="dropdown-item edit-btn"
-                                                                data-toggle="modal" data-id="{{ $attribute->id }}">
+                                                                data-toggle="modal" data-id="{{ $attribute_value->id }}">
                                                                 <i class="far fa-edit mr-3"></i>Edit</a>
                                                             <a href="#" class="dropdown-item delete-btn"
-                                                                data-toggle="modal" data-id="{{ $attribute->id }}"><i
+                                                                data-toggle="modal" data-id="{{ $attribute_value->id }}"><i
                                                                     class="far fa-trash-alt mr-3"></i>Delete</a>
                                                         </div>
                                                     </div>
                                                 </td>
                                                 <td>{{ $attribute->attribute }}</td>
                                                 <td>
-                                                    @if ($attribute->status == 1)
-                                                        <span class="badge badge-success text-uppercase">Active</span>
-                                                    @else
-                                                        <span class="badge badge-danger text-uppercase">Inactive</span>
+                                                    {{ $attribute_value->attribute_value }}
+                                                    @if (preg_match('/^#[0-9A-Fa-f]{6}$/', $attribute_value->attribute_value))
+                                                        <label class="colour ml-2"
+                                                            style="{{ ColorHelper::getDarkColorStyle($attribute_value->attribute_value) }}"></label>
                                                     @endif
                                                 </td>
                                             </tr>
@@ -245,7 +231,7 @@
                 validateString: function(value) {
                     // console.log(value);
                     return $.ajax({
-                        url: "{{ route('admin.attribute.unique-name') }}",
+                        url: "{{ route('admin.attribute_value.unique-name') }}",
                         method: "POST",
                         data: {
                             name: value,
@@ -271,15 +257,12 @@
                 $.busyLoadFull("show");
                 id = $(this).data('id');
                 // Make an AJAX request to fetch data
-                $.get("{{ route('admin.attribute.edit', '') }}/" + id, function(data) {
+                $.get("{{ route('admin.attribute_value.edit', '') }}/" + id, function(data) {
                     $.busyLoadFull("hide");
                     $('#edit-modal').modal('show');
-                    $("#editForm").attr("action", "{{ route('admin.attribute.update', '') }}/" +
-                        data
-                        .id);
-                    $('#editForm #name').val(data.attribute);
-                    $('#editForm #attribute_status option[value="' + data.status + '"]').prop(
-                        'selected', true);
+                    $("#editForm").attr("action",
+                        "{{ route('admin.attribute_value.update', '') }}/" + data.id);
+                    $('#editForm #name').val(data.attribute_value);
                 });
             });
 
@@ -327,7 +310,7 @@
             window.Parsley.addValidator('editformname', {
                 validateString: function(value) {
                     return $.ajax({
-                        url: "{{ route('admin.attribute.unique-name') }}",
+                        url: "{{ route('admin.attribute_value.unique-name') }}",
                         method: "POST",
                         data: {
                             name: value,
@@ -353,7 +336,7 @@
                 e.preventDefault();
                 Swal.fire({
                         title: "ATTENTION !!!",
-                        text: "If you delete this attribute it can't be restored.",
+                        text: "If you delete this attribute value it can't be restored.",
                         type: "warning",
                         showCancelButton: true,
                     })
@@ -361,7 +344,7 @@
                         if (res.value) {
                             $.ajax({
                                 type: 'DELETE',
-                                url: "{{ route('admin.attribute.destroy', ['id' => '__id__']) }}"
+                                url: "{{ route('admin.attribute_value.destroy', ['id' => '__id__']) }}"
                                     .replace('__id__', id),
 
                                 success: function(res) {

@@ -124,7 +124,7 @@
                                                         </div>
                                                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton"
                                                             style="">
-                                                            <a href="#" class="dropdown-item">
+                                                            <a href="{{ route('admin.attribute_values.index', ['id' => $attribute->id]) }}" class="dropdown-item">
                                                                 <i class="far fa-eye mr-3"></i>View
                                                             </a>
                                                             <a href="#" class="dropdown-item edit-btn"
