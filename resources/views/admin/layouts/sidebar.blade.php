@@ -72,6 +72,9 @@
                             <li>
                                 <a href="{{ route('admin.attributes.index') }}">Attribute</a>
                             </li>
+                            <li>
+                                <a href="{{ route('admin.attribute_sets.index') }}">Attribute Set</a>
+                            </li>
                         </ul>
                     </div>
                 </li>

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jan 27, 2024 at 08:45 AM
+-- Generation Time: Jan 27, 2024 at 09:23 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.0.28
 
@@ -1925,62 +1925,27 @@ INSERT INTO `areas` (`id`, `governorate_id`, `name`, `name_ar`) VALUES
 --
 
 CREATE TABLE `attribute_set` (
-  `sno` int(11) NOT NULL,
+  `id` int(11) NOT NULL,
   `name` varchar(200) NOT NULL,
-  `status` int(11) NOT NULL DEFAULT 1,
+  `status` enum('0','1','2') NOT NULL DEFAULT '2',
   `created_at` datetime DEFAULT NULL,
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `created_by` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
---
--- Dumping data for table `attribute_set`
---
-
-INSERT INTO `attribute_set` (`sno`, `name`, `status`, `created_at`, `updated_at`, `created_by`) VALUES
-(1, 'Laptop', 1, '2023-06-29 10:28:08', '2023-06-29 04:58:08', '1'),
-(2, 'Women Fashion', 1, '2023-07-05 11:12:20', '2023-07-05 05:42:20', '1'),
-(3, 'Men Fashion', 1, '2023-07-05 11:20:28', '2023-07-05 05:50:28', '1'),
-(4, 'Lamp', 1, '2023-07-05 01:54:28', '2023-07-05 08:24:28', '1'),
-(6, 'Computer', 1, '2023-10-08 05:37:36', '2023-10-08 12:07:36', '1'),
-(7, 'Camera', 1, '2023-11-22 10:23:55', '2023-11-22 04:53:55', '1');
-
 -- --------------------------------------------------------
 
 --
--- Table structure for table `attribute_set_product_info`
+-- Table structure for table `attribute_set_attributes`
 --
 
-CREATE TABLE `attribute_set_product_info` (
+CREATE TABLE `attribute_set_attributes` (
   `id` int(11) NOT NULL,
   `attribute_set_id` int(11) NOT NULL,
-  `product_info_set_id` int(11) NOT NULL,
+  `attribute_id` int(11) NOT NULL,
   `created_at` timestamp NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
---
--- Dumping data for table `attribute_set_product_info`
---
-
-INSERT INTO `attribute_set_product_info` (`id`, `attribute_set_id`, `product_info_set_id`, `created_at`, `updated_at`) VALUES
-(2, 1, 1, '2023-06-29 05:04:14', '2023-06-29 05:04:14'),
-(3, 1, 2, '2023-06-29 05:04:14', '2023-06-29 05:04:14'),
-(4, 2, 1, '2023-07-05 05:42:20', '2023-07-05 05:42:20'),
-(5, 2, 3, '2023-07-05 05:48:17', '2023-07-05 05:48:17'),
-(7, 4, 1, '2023-07-05 08:24:28', '2023-07-05 08:24:28'),
-(8, 3, 1, '2023-07-22 13:35:48', '2023-07-22 13:35:48'),
-(9, 3, 3, '2023-07-22 13:35:48', '2023-07-22 13:35:48'),
-(10, 1, 4, '2023-08-01 09:21:33', '2023-08-01 09:21:33'),
-(14, 6, 1, '2023-10-08 12:07:36', '2023-10-08 12:07:36'),
-(15, 6, 2, '2023-10-08 12:07:36', '2023-10-08 12:07:36'),
-(16, 6, 5, '2023-10-08 12:07:36', '2023-10-08 12:07:36'),
-(17, 7, 1, '2023-11-22 04:53:55', '2023-11-22 04:53:55'),
-(18, 7, 5, '2023-11-22 04:53:55', '2023-11-22 04:53:55'),
-(19, 7, 7, '2023-11-22 04:53:55', '2023-11-22 04:53:55'),
-(20, 7, 8, '2023-11-22 04:53:55', '2023-11-22 04:53:55'),
-(21, 7, 9, '2023-11-22 04:53:55', '2023-11-22 04:53:55'),
-(22, 7, 10, '2023-11-22 04:53:55', '2023-11-22 04:53:55');
 
 -- --------------------------------------------------------
 
@@ -5609,19 +5574,22 @@ CREATE TABLE `product_attributes_set` (
 --
 
 INSERT INTO `product_attributes_set` (`id`, `attribute`, `attribute_ar`, `status`, `created_at`, `updated_at`, `created_by`) VALUES
-(1, 'Size', '', '1', '2024-01-26 11:30:16', '2024-01-27 05:01:22', ''),
-(2, 'Colour', '', '1', '2024-01-26 11:30:16', '2024-01-26 19:44:57', ''),
-(4, 'Fabric', '', '0', '2024-01-26 11:30:16', '2023-03-11 09:08:07', ''),
-(5, 'Fit/Shape', '', '0', '2024-01-26 11:30:16', '2023-05-15 05:08:00', ''),
-(6, 'Neck', '', '0', '2024-01-26 11:30:16', '2023-05-14 19:24:19', ''),
-(7, 'Occasion', '', '0', '2024-01-26 11:30:16', '2023-05-15 04:38:21', ''),
-(8, 'Ornamentation', '', '0', '2024-01-26 11:30:16', '2023-05-15 04:39:00', ''),
-(9, 'Pattern', '', '0', '2024-01-26 11:30:16', '2023-05-15 04:39:11', ''),
-(10, 'Print &  Pattern', '', '0', '2024-01-26 11:30:16', '2023-05-15 04:39:34', ''),
-(11, 'Sleeve length', '', '0', '2024-01-26 11:30:16', '2023-05-15 04:42:20', ''),
-(12, 'Stitch Type', '', '0', '2024-01-26 11:30:16', '2023-05-15 04:40:10', ''),
-(13, 'Combo Of ', '', '0', '2024-01-26 11:30:16', '2023-05-15 04:40:26', ''),
-(21, 'D.NO', '', '0', '2024-01-26 11:30:16', '2023-06-04 03:27:46', '');
+(1, 'Size', NULL, '1', '2024-01-26 11:30:16', '2024-01-27 09:55:15', ''),
+(2, 'Colour', NULL, '1', '2024-01-26 11:30:16', '2024-01-27 09:55:15', ''),
+(4, 'Fabric', NULL, '1', '2024-01-26 11:30:16', '2024-01-27 09:55:15', ''),
+(5, 'Fit/Shape', NULL, '1', '2024-01-26 11:30:16', '2024-01-27 09:55:15', ''),
+(6, 'Neck', NULL, '1', '2024-01-26 11:30:16', '2024-01-27 09:55:15', ''),
+(7, 'Occasion', NULL, '1', '2024-01-26 11:30:16', '2024-01-27 09:55:15', ''),
+(8, 'Ornamentation', NULL, '0', '2024-01-26 11:30:16', '2024-01-27 09:57:26', ''),
+(9, 'Pattern', NULL, '1', '2024-01-26 11:30:16', '2024-01-27 09:55:15', ''),
+(10, 'Print &  Pattern', NULL, '1', '2024-01-26 11:30:16', '2024-01-27 09:55:15', ''),
+(11, 'Sleeve length', NULL, '1', '2024-01-26 11:30:16', '2024-01-27 09:55:15', ''),
+(12, 'Stitch Type', NULL, '1', '2024-01-26 11:30:16', '2024-01-27 09:55:15', ''),
+(13, 'Combo Of ', NULL, '1', '2024-01-26 11:30:16', '2024-01-27 09:55:15', ''),
+(25, 'RAM', NULL, '1', '2024-01-27 12:03:13', '2024-01-27 12:03:13', '1'),
+(26, 'SSD', NULL, '1', '2024-01-27 12:03:43', '2024-01-27 12:03:43', '1'),
+(27, 'HDD', NULL, '1', '2024-01-27 12:03:49', '2024-01-27 12:03:49', '1'),
+(28, 'ROM', NULL, '1', '2024-01-27 20:13:18', '2024-01-27 20:13:18', '1');
 
 -- --------------------------------------------------------
 
@@ -7107,12 +7075,12 @@ ALTER TABLE `areas`
 -- Indexes for table `attribute_set`
 --
 ALTER TABLE `attribute_set`
-  ADD PRIMARY KEY (`sno`);
+  ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `attribute_set_product_info`
+-- Indexes for table `attribute_set_attributes`
 --
-ALTER TABLE `attribute_set_product_info`
+ALTER TABLE `attribute_set_attributes`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -7695,13 +7663,13 @@ ALTER TABLE `areas`
 -- AUTO_INCREMENT for table `attribute_set`
 --
 ALTER TABLE `attribute_set`
-  MODIFY `sno` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
--- AUTO_INCREMENT for table `attribute_set_product_info`
+-- AUTO_INCREMENT for table `attribute_set_attributes`
 --
-ALTER TABLE `attribute_set_product_info`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+ALTER TABLE `attribute_set_attributes`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
 
 --
 -- AUTO_INCREMENT for table `bank_details`
@@ -7977,7 +7945,7 @@ ALTER TABLE `product_attributes_conf`
 -- AUTO_INCREMENT for table `product_attributes_set`
 --
 ALTER TABLE `product_attributes_set`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
 --
 -- AUTO_INCREMENT for table `product_attribute_value`

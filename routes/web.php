@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\Basic\BrandController as AdminBrandController;
 use App\Http\Controllers\Admin\Basic\CategoryController as AdminCategoryController;
 use App\Http\Controllers\Admin\Basic\AttributeController as AdminAttributeController;
 use App\Http\Controllers\Admin\Basic\AttributeValueController as AdminAttributeValueController;
+use App\Http\Controllers\Admin\Basic\AttributeSetController as AdminAttributeSetController;
 
 /*
 |--------------------------------------------------------------------------
@@ -67,8 +68,15 @@ Route::group(['prefix' => 'admin', 'middleware' => ['admin.check']], function ()
         Route::get('attribute-value/edit/{id}', [AdminAttributeValueController::class, 'edit'])->name('admin.attribute_value.edit');
         Route::put('attribute-value/update/{id}', [AdminAttributeValueController::class, 'update'])->name('admin.attribute_value.update');
         Route::delete('attribute-value/delete/{id}', [AdminAttributeValueController::class, 'destroy'])->name('admin.attribute_value.destroy');
+
+        Route::get('attribute-sets', [AdminAttributeSetController::class, 'index'])->name('admin.attribute_sets.index');
+        Route::post('attribute-set/store', [AdminAttributeSetController::class, 'store'])->name('admin.attribute_set.store');
+        Route::get('attribute-set/edit/{id}', [AdminAttributeSetController::class, 'edit'])->name('admin.attribute_set.edit');
+        Route::put('attribute-set/update/{id}', [AdminAttributeSetController::class, 'update'])->name('admin.attribute_set.update');
+        Route::delete('attribute-set/delete/{id}', [AdminAttributeSetController::class, 'destroy'])->name('admin.attribute_set.destroy');
     });
 
     Route::post('unique-attribute-name', [AjaxUniqueController::class, 'uniqueAttributeName'])->name('admin.attribute.unique-name');
     Route::post('unique-attribute-value-name', [AjaxUniqueController::class, 'uniqueAttributeValueName'])->name('admin.attribute_value.unique-name');
+    Route::post('unique-attribute-set-name', [AjaxUniqueController::class, 'uniqueAttributeSetName'])->name('admin.attribute_set.unique-name');
 });

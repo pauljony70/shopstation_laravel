@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Admin\Attribute;
+use App\Models\Admin\AttributeSet;
 use App\Models\Admin\AttributeValue;
 
 class AjaxUniqueController extends Controller
@@ -33,6 +34,21 @@ class AjaxUniqueController extends Controller
             $output = array('success' => true);
             return response()->json($output, 200);
         } elseif ($attribute_value->id == $request->exception_data) { //in case of edit form
+            $output = array('success' => true);
+            return response()->json($output, 200);
+        }
+    }
+
+    public function uniqueAttributeSetName(Request $request)
+    {
+        $attribute_set = AttributeSet::where([
+            'name' => $request->name,
+        ])->first();
+
+        if (empty($attribute_set)) {
+            $output = array('success' => true);
+            return response()->json($output, 200);
+        } elseif ($attribute_set->id == $request->exception_data) { //in case of edit form
             $output = array('success' => true);
             return response()->json($output, 200);
         }

@@ -32,6 +32,7 @@
     <link href="{{ asset('assets/libs/busyload/app.min.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/libs/auto-complete/jquery-ui.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/libs/ladda/ladda-themeless.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('assets/libs/jquery-multiselect/css/multiselect.css') }}" rel="stylesheet" />
 
     <!-- third party css -->
     <link href="{{ asset('assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css') }}" rel="stylesheet"
@@ -121,6 +122,7 @@
     <script src="{{ asset('assets/libs/bootstrap-datepicker/js/bootstrap-datepicker.min.js') }}"></script>
     <script src="{{ asset('assets/libs/clockpicker/bootstrap-clockpicker.min.js') }}"></script>
     <script src="{{ asset('assets/libs/busyload/app.min.js') }}"></script>
+    <script src="{{ asset('assets/libs/jquery-multiselect/js/multiselect.js') }}"></script>
 
     <!-- third party js -->
     <script src="{{ asset('assets/libs/datatables.net/js/jquery.dataTables.min.js') }}"></script>
