@@ -8,99 +8,40 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Helpers\ImageHelper;
 use Illuminate\Support\Str;
+use Illuminate\Support\Collection;
 
 class CategoryController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index($cat_slug = null)
+    public function index($catSlug = null)
     {
-        // Retrieve categories where status is 1 or 0 from the database
-        $categories = Category::whereIn('status', [0, 1])->get();
-
         // Organize all categories in a hierarchical structure
-        $hierarchicalCategories = $this->buildCategoryTree($categories);
+        $allCategories = Category::getCategoryTree();
 
         // Initialize breadcrumbs array
         $breadcrumbs = [];
 
         // If a category slug is provided, filter the categories to show only the relevant subtree
-        if ($cat_slug) {
-            $selectedCategory = $this->findCategoryBySlug($categories, $cat_slug);
+        if ($catSlug) {
+            $selectedCategory = Category::firstWhere('cat_slug', $catSlug);
             if ($selectedCategory) {
                 // Build breadcrumbs for the selected category
-                $breadcrumbs = $this->buildBreadcrumbs($categories, $selectedCategory->id);
+                $breadcrumbs = Category::getBreadcrumbs($selectedCategory->id);
                 // Build a tree only for the selected category's subtree
-                $categories = $this->buildCategoryTree($categories, $selectedCategory->id);
+                $categories = Category::getCategoryTree($selectedCategory->id);
             } else {
                 // If the provided slug does not match any category, return a 404 page
                 abort(Response::HTTP_NOT_FOUND);
             }
         } else {
             // If no category slug is provided, return all parent categories
-            $categories = $this->buildCategoryTree($categories, 0);
+            $categories = Category::getCategoryTree();
         }
 
         // Pass the organized categories data and breadcrumbs to the view for display
-        return view('admin.basic.category', compact('hierarchicalCategories', 'categories', 'breadcrumbs'));
-    }
-
-    protected function findCategoryBySlug($categories, $slug)
-    {
-        foreach ($categories as $category) {
-            if ($category->cat_slug == $slug) {
-                return $category;
-            }
-        }
-
-        return null;
-    }
-
-    protected function findCategoryById($categories, $categoryId)
-    {
-        foreach ($categories as $category) {
-            if ($category->id == $categoryId) {
-                return $category;
-            }
-        }
-
-        return null;
-    }
-
-    protected function buildCategoryTree($categories, $parentId = 0)
-    {
-        $categoryTree = [];
-
-        foreach ($categories as $category) {
-            if ($category->parent_id == $parentId) {
-                $children = $this->buildCategoryTree($categories, $category->id);
-
-                if ($children->isNotEmpty()) {
-                    $category->children = $children;
-                }
-
-                $categoryTree[] = $category;
-            }
-        }
-
-        return collect($categoryTree);
-    }
-
-    protected function buildBreadcrumbs($categories, $categoryId)
-    {
-        $breadcrumbs = [];
-
-        $category = $this->findCategoryById($categories, $categoryId);
-
-        while ($category) {
-            // Add the category to the beginning of the breadcrumbs array
-            array_unshift($breadcrumbs, $category);
-            // Move to the parent category
-            $category = $this->findCategoryById($categories, $category->parent_id);
-        }
-
-        return $breadcrumbs;
+        return view('admin.basic.category', compact('allCategories', 'categories', 'breadcrumbs'));
     }
 
     /**
@@ -288,7 +229,7 @@ class CategoryController extends Controller
         $category->delete();
     }
 
-    public function uniqueCategoryNmae(Request $request)
+    public function uniqueCategoryName(Request $request)
     {
         $category = Category::where([
             'cat_name' => $request->name,

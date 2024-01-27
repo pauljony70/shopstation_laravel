@@ -136,7 +136,7 @@ class BrandController extends Controller
         ], 200);
     }
 
-    public function uniqueBrandNmae(Request $request)
+    public function uniqueBrandName(Request $request)
     {
         $brand = Brand::where([
             'brand_name' => $request->name,

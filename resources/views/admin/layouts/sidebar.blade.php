@@ -69,6 +69,9 @@
                             <li>
                                 <a href="{{ route('admin.category.index') }}">Category</a>
                             </li>
+                            <li>
+                                <a href="{{ route('admin.attributes.index') }}">Attributes</a>
+                            </li>
                         </ul>
                     </div>
                 </li>
