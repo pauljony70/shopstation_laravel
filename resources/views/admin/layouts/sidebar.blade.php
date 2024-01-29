@@ -70,10 +70,10 @@
                                 <a href="{{ route('admin.category.index') }}">Category</a>
                             </li>
                             <li>
-                                <a href="{{ route('admin.attributes.index') }}">Attribute</a>
+                                <a href="{{ route('admin.attribute.index') }}">Attribute</a>
                             </li>
                             <li>
-                                <a href="{{ route('admin.attribute_sets.index') }}">Attribute Set</a>
+                                <a href="{{ route('admin.attribute_set.index') }}">Attribute Set</a>
                             </li>
                         </ul>
                     </div>
@@ -81,9 +81,9 @@
 
                 <!-- portals -->
                 <li>
-                    <a href="#">
+                    <a href="{{ route('admin.product.index') }}">
                         <i class="fas fa-search"></i>
-                        <span> Search Member </span>
+                        <span> Products </span>
                     </a>
                 </li>
 

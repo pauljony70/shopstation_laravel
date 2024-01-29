@@ -88,7 +88,7 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-body">
-                                <a href="{{ route('admin.attributes.index') }}"
+                                <a href="{{ route('admin.attribute.index') }}"
                                     class="btn btn-dark waves-effect waves-light mb-3">
                                     <i class="fas fa-arrow-left"></i> Back</a>
                                 <button type="button" class="btn btn-info waves-effect waves-light mb-3"

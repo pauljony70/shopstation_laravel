@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\Basic\CategoryController as AdminCategoryControll
 use App\Http\Controllers\Admin\Basic\AttributeController as AdminAttributeController;
 use App\Http\Controllers\Admin\Basic\AttributeValueController as AdminAttributeValueController;
 use App\Http\Controllers\Admin\Basic\AttributeSetController as AdminAttributeSetController;
+use App\Http\Controllers\Admin\ProductController as AdminProductController;
 
 /*
 |--------------------------------------------------------------------------
@@ -57,23 +58,28 @@ Route::group(['prefix' => 'admin', 'middleware' => ['admin.check']], function ()
         Route::delete('category/delete/{id}', [AdminCategoryController::class, 'destroy'])->name('admin.category.destroy');
         Route::post('unique-category-name', [AdminCategoryController::class, 'uniqueCategoryName'])->name('admin.category.unique-name');
 
-        Route::get('attributes', [AdminAttributeController::class, 'index'])->name('admin.attributes.index');
+        Route::get('attributes', [AdminAttributeController::class, 'index'])->name('admin.attribute.index');
         Route::post('attribute/store', [AdminAttributeController::class, 'store'])->name('admin.attribute.store');
         Route::get('attribute/edit/{id}', [AdminAttributeController::class, 'edit'])->name('admin.attribute.edit');
         Route::put('attribute/update/{id}', [AdminAttributeController::class, 'update'])->name('admin.attribute.update');
         Route::delete('attribute/delete/{id}', [AdminAttributeController::class, 'destroy'])->name('admin.attribute.destroy');
 
-        Route::get('attribute-values', [AdminAttributeValueController::class, 'index'])->name('admin.attribute_values.index');
+        Route::get('attribute-values', [AdminAttributeValueController::class, 'index'])->name('admin.attribute_value.index');
         Route::post('attribute-value/store', [AdminAttributeValueController::class, 'store'])->name('admin.attribute_value.store');
         Route::get('attribute-value/edit/{id}', [AdminAttributeValueController::class, 'edit'])->name('admin.attribute_value.edit');
         Route::put('attribute-value/update/{id}', [AdminAttributeValueController::class, 'update'])->name('admin.attribute_value.update');
         Route::delete('attribute-value/delete/{id}', [AdminAttributeValueController::class, 'destroy'])->name('admin.attribute_value.destroy');
 
-        Route::get('attribute-sets', [AdminAttributeSetController::class, 'index'])->name('admin.attribute_sets.index');
+        Route::get('attribute-sets', [AdminAttributeSetController::class, 'index'])->name('admin.attribute_set.index');
         Route::post('attribute-set/store', [AdminAttributeSetController::class, 'store'])->name('admin.attribute_set.store');
         Route::get('attribute-set/edit/{id}', [AdminAttributeSetController::class, 'edit'])->name('admin.attribute_set.edit');
         Route::put('attribute-set/update/{id}', [AdminAttributeSetController::class, 'update'])->name('admin.attribute_set.update');
         Route::delete('attribute-set/delete/{id}', [AdminAttributeSetController::class, 'destroy'])->name('admin.attribute_set.destroy');
+    });
+
+    Route::group(['prefix' => 'product'], function () {
+        Route::get('/all-products', [AdminProductController::class, 'index'])->name('admin.product.index');
+        Route::get('/create', [AdminProductController::class, 'create'])->name('admin.product.create');
     });
 
     Route::post('unique-attribute-name', [AjaxUniqueController::class, 'uniqueAttributeName'])->name('admin.attribute.unique-name');
